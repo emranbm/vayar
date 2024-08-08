@@ -20,7 +20,7 @@ jobs:
       - run: pipenv install
         working-directory: ./backend/
       - name: Start database
-        run: docker-compose up -d database
+        run: docker compose up -d database
       - name: Wait for DB to get ready
         # TODO: Instead of blind sleep, check DB health.
         run: sleep 2
