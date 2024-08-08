@@ -2,10 +2,33 @@ version: "3.7"
 services:
   backend:
     image: ${DOCKER_IMAGES_PREFIX}-backend:${VAYAR_VERSION}
+    environment:
+      - VAYAR_DB_NAME
+      - VAYAR_DB_USER
+      - VAYAR_DB_PASSWORD
+      - VAYAR_DB_ROOT_PASSWORD
+      - VAYAR_DB_HOST
+      - VAYAR_DB_PORT
     build:
       context: backend/
       args:
         - HTTPS_PROXY
+    depends_on:
+      - database
+  telegrambot:
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${VAYAR_VERSION}
+    command: bash -c "sleep 2 && ./manage.py telegrambot"
+    restart: unless-stopped
+    environment:
+      - VAYAR_SECRET_KEY
+      - VAYAR_DB_USER
+      - VAYAR_DB_PASSWORD
+      - VAYAR_DB_NAME
+      - VAYAR_DB_HOST
+      - VAYAR_DB_PORT
+      - VAYAR_TELEGRAM_BOT_TOKEN
+    ports:
+      - "9090:9090"
     depends_on:
       - database
   database:
