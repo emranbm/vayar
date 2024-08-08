@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - master
-env:
-  HELM_MAX_HISTORY: "5"
 jobs:
   unit-tests:
     runs-on: ubuntu-20.04
@@ -42,19 +40,16 @@ jobs:
       - run: pipenv run python ./manage.py makemigrations --dry-run --check
         working-directory: ./backend/
   build-backend-image:
-    container:
-      image: hamravesh/darkube-cli:v1.1
-      options: --user root
-    env:
-      IMAGE_NAME: registry.hamdocker.ir/emranbm/vayar
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
-      - name: checkout commit
-        uses: actions/checkout@v4
-      - name: darkube-cli build & push
-        run: 'darkube build --push -t $IMAGE_NAME:${GITHUB_SHA:0:7} -t $IMAGE_NAME:${GITHUB_REF_NAME}
-        --docker-auth-config ${{secrets.DOCKER_AUTH_CONFIG}} --workdir . --file ./backend/Dockerfile
-        --build-context ./backend/ '
+      - uses: actions/checkout@v3
+        with:
+          lfs: true
+      - run: echo "VAYAR_VERSION=master-${GITHUB_SHA:0:7}" >> $GITHUB_ENV
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
+      - run: docker compose build backend
+      - run: docker compose push backend
   acceptance-tests:
     runs-on: ubuntu-20.04
     strategy:
@@ -118,4 +113,4 @@ jobs:
       - name: darkube-cli deploy
         run: darkube deploy --token ${{secrets.DEPLOY_TOKEN_VAYAR_EMRANBM_VAYAR_HAMRAVESH_C14}}
           --app-id ${{secrets.APP_ID_VAYAR_EMRANBM_VAYAR_HAMRAVESH_C14}} --image-tag
-          ${GITHUB_SHA:0:7} --job-id ${GITHUB_RUN_ID}
+          master-${GITHUB_SHA:0:7} --job-id ${GITHUB_RUN_ID}
