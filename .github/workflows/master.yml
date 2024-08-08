@@ -55,12 +55,62 @@ jobs:
         run: 'darkube build --push -t $IMAGE_NAME:${GITHUB_SHA:0:7} -t $IMAGE_NAME:${GITHUB_REF_NAME}
         --docker-auth-config ${{secrets.DOCKER_AUTH_CONFIG}} --workdir . --file ./backend/Dockerfile
         --build-context ./backend/ '
+  acceptance-tests:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: true
+      max-parallel: 1 # Due to the shared test clients and bot token between tests
+      matrix:
+        test_speed:
+          - 'None'
+          # - '"slow"' # Commented to free 1-minute CI placeholder. Uncomment when any slow test existed!
+    needs:
+      - build-backend-image
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+          cache: 'pipenv'
+      - name: Install pipenv
+        run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
+      - run: pipenv install --dev
+        working-directory: ./acceptance-tests/telegrambot/
+      - name: Make Pipenv also accessible inside tests
+        run: sudo cp `which pipenv` /usr/bin/pipenv
+      - name: Create .env
+        working-directory: ./acceptance-tests/telegrambot/
+        run: |
+          echo "
+          VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
+          CRUSHBACK_TELEGRAM_BOT_USERNAME=${{ vars.ACCEPTANCE_TEST_BOT_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT1_USERNAME=${{ vars.ACCEPTANCE_TEST_CLIENT1_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT1_API_ID=${{ secrets.ACCEPTANCE_TEST_CLIENT1_API_ID }}
+          CRUSHBACK_TELEGRAM_CLIENT1_API_HASH=${{ secrets.ACCEPTANCE_TEST_CLIENT1_API_HASH }}
+          CRUSHBACK_TELEGRAM_CLIENT1_SESSION_STRING=${{ secrets.ACCEPTANCE_TEST_CLIENT1_SESSION_STRING }}
+          CRUSHBACK_TELEGRAM_CLIENT2_USERNAME=${{ vars.ACCEPTANCE_TEST_CLIENT2_USERNAME }}
+          CRUSHBACK_TELEGRAM_CLIENT2_API_ID=${{ secrets.ACCEPTANCE_TEST_CLIENT2_API_ID }}
+          CRUSHBACK_TELEGRAM_CLIENT2_API_HASH=${{ secrets.ACCEPTANCE_TEST_CLIENT2_API_HASH }}
+          CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.ACCEPTANCE_TEST_CLIENT2_SESSION_STRING }}
+          " > .env
+      - name: Pull backend image
+        run: >
+          VAYAR_VERSION=${GITHUB_SHA:0:7}
+          VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
+          docker-compose pull backend
+      - name: Run acceptance tests
+        working-directory: ./acceptance-tests/telegrambot/
+        run: >
+          VAYAR_VERSION=${GITHUB_SHA:0:7}
+          VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
+          python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   deploy:
     runs-on: ubuntu-20.04
     needs:
       - build-backend-image
       - unit-tests
       - check-migrations
+      - acceptance-tests
     container: hamravesh/darkube-cli:v1.1
     steps:
       - name: darkube-cli deploy
