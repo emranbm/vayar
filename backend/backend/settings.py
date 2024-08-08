@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('BOTMON_SECRET_KEY', 'fake-secret')
+SECRET_KEY = os.environ.get('VAYAR_SECRET_KEY', 'fake-secret')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -93,11 +93,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('BOTMON_DB_NAME', 'botmon_db'),
-        'USER': os.environ.get('BOTMON_DB_USER', 'botmon'),
-        'PASSWORD': os.environ.get('BOTMON_DB_PASSWORD', 'dummy'),
-        'HOST': os.environ.get('BOTMON_DB_HOST', 'localhost'),
-        'PORT': os.environ.get('BOTMON_DB_PORT', '5432'),
+        'NAME': os.environ.get('VAYAR_DB_NAME', 'vayar'),
+        'USER': os.environ.get('VAYAR_DB_USER', 'vayar'),
+        'PASSWORD': os.environ.get('VAYAR_DB_PASSWORD', 'dummy'),
+        'HOST': os.environ.get('VAYAR_DB_HOST', 'localhost'),
+        'PORT': os.environ.get('VAYAR_DB_PORT', '5432'),
         'TEST': {
             'NAME': 'test_db',
         },
@@ -162,17 +162,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 DRF_RECAPTCHA_SECRET_KEY = os.environ.get('RECAPTCHA_SERVER_KEY', 'dummy')
 DRF_RECAPTCHA_TESTING = True
 
-TELEGRAM_BOT_TOKEN = os.environ.get('BOTMON_TELEGRAM_BOT_TOKEN', 'dummy')
-TELEGRAM_PROXY_URL = os.environ.get('BOTMON_TELEGRAM_PROXY_URL', None)
+TELEGRAM_BOT_TOKEN = os.environ.get('VAYAR_TELEGRAM_BOT_TOKEN', 'dummy')
+TELEGRAM_PROXY_URL = os.environ.get('VAYAR_TELEGRAM_PROXY_URL', None)
 
-TELEGRAM_AGENT_SESSION_STRING = os.environ.get('BOTMON_TELEGRAM_AGENT_SESSION_STRING', 'dummy')
-TELEGRAM_AGENT_API_ID = int(os.environ.get('BOTMON_TELEGRAM_AGENT_API_ID', 12345))
-TELEGRAM_AGENT_API_HASH = os.environ.get('BOTMON_TELEGRAM_AGENT_API_HASH', 'dummy')
-TELEGRAM_AGENT_HEALTH_CHECK_MESSAGE = os.environ.get('BOTMON_TELEGRAM_AGENT_HEALTH_CHECK_MESSAGE', '/botmoncheck')
-TELEGRAM_AGENT_HEALTH_CHECK_TIMEOUT_SECONDS = int(os.environ.get('BOTMON_TELEGRAM_AGENT_HEALTH_CHECK_TIMEOUT_SECONDS', 1))
-TELEGRAM_AGENT_HEALTH_CHECK_RETRIES = int(os.environ.get('BOTMON_TELEGRAM_AGENT_HEALTH_CHECK_RETRIES', 1))
+TELEGRAM_AGENT_SESSION_STRING = os.environ.get('VAYAR_TELEGRAM_AGENT_SESSION_STRING', 'dummy')
+TELEGRAM_AGENT_API_ID = int(os.environ.get('VAYAR_TELEGRAM_AGENT_API_ID', 12345))
+TELEGRAM_AGENT_API_HASH = os.environ.get('VAYAR_TELEGRAM_AGENT_API_HASH', 'dummy')
 
-HEARTBEAT_RECEIVER_CHAT_ID = int(os.environ.get('BOTMON_HEARTBEAT_RECEIVER_CHAT_ID', 12345))
+HEARTBEAT_RECEIVER_CHAT_ID = int(os.environ.get('VAYAR_HEARTBEAT_RECEIVER_CHAT_ID', 12345))
 HEARTBEAT_PERIOD_SECONDS = 24 * 60 * 60
 
 ALERT_CERTAINTY_WAIT_SECONDS = 3 * 60

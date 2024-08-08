@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    image: ${DOCKER_IMAGES_PREFIX}-backend:${BOTMON_VERSION}
+    image: ${DOCKER_IMAGES_PREFIX}-backend:${VAYAR_VERSION}
     build:
       context: backend/
       args:
@@ -11,10 +11,10 @@ services:
   database:
     image: postgres:14.6-alpine3.17
     environment:
-      - POSTGRES_PASSWORD=$BOTMON_DB_ROOT_PASSWORD
-      - BOTMON_DB_USER
-      - BOTMON_DB_PASSWORD
-      - BOTMON_DB_NAME
+      - POSTGRES_PASSWORD=$VAYAR_DB_ROOT_PASSWORD
+      - VAYAR_DB_USER
+      - VAYAR_DB_PASSWORD
+      - VAYAR_DB_NAME
     ports:
       - $DB_PORT_MAPPING
     volumes:
