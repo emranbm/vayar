@@ -38,7 +38,7 @@ class TelegramBotTestCase(AsyncTestCase):
 
     @classmethod
     def _stop_database(cls):
-        subprocess.Popen(["docker-compose", "down"],
+        subprocess.Popen(["docker", "compose", "down"],
                          cwd=cls.ROOT_DIR).communicate()
 
     @classmethod

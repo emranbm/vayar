@@ -97,7 +97,7 @@ jobs:
         run: >
           VAYAR_VERSION=${GITHUB_SHA:0:7}
           VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
-          docker-compose pull backend
+          docker compose pull backend
       - name: Run acceptance tests
         working-directory: ./acceptance-tests/telegrambot/
         run: >

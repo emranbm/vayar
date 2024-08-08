@@ -39,7 +39,7 @@ def setup_test_environment():
 def print_test_environment_docker_compose_log():
     print("---------------------")
     print("Docker-compose services logs:")
-    subprocess.Popen(["docker-compose", "logs"],
+    subprocess.Popen(["docker", "compose", "logs"],
                      cwd=testing_utils.ROOT_DIR).communicate()
 
 
@@ -53,18 +53,18 @@ def run_tests(extra_args: List[str]):
 
 def teardown_test_environment():
     print("Tearing down test environment ...")
-    subprocess.Popen(["docker-compose", "down"],
+    subprocess.Popen(["docker", "compose", "down"],
                      cwd=testing_utils.ROOT_DIR).communicate()
 
 
 def _start_database():
-    subprocess.Popen(["docker-compose", "up", "-d", "database"],
+    subprocess.Popen(["docker", "compose", "up", "-d", "database"],
                      cwd=testing_utils.ROOT_DIR).communicate()
     sleep(2)  # Wait for DB to get ready
 
 
 def _stop_database():
-    subprocess.Popen(["docker-compose", "down"],
+    subprocess.Popen(["docker", "compose", "down"],
                      cwd=testing_utils.ROOT_DIR).communicate()
 
 

@@ -57,7 +57,7 @@ def run_backend_manage_command(*cmd: str, stdin=None, additional_env: Optional[D
 
 
 def docker_compose_up(additional_env: Optional[Dict[str, str]] = None):
-    out, _ = subprocess.Popen(["docker-compose", "config", "--services"],
+    out, _ = subprocess.Popen(["docker", "compose", "config", "--services"],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE,
                               cwd=ROOT_DIR).communicate()
@@ -71,11 +71,11 @@ def _docker_compose_up(args: List[str], additional_env: Optional[Dict[str, str]]
     if additional_env is not None:
         for k, v in additional_env.items():
             env[k] = v
-    out, _ = subprocess.Popen(["docker-compose", "config", "--services"],
+    out, _ = subprocess.Popen(["docker", "compose", "config", "--services"],
                               stdout=subprocess.PIPE,
                               stderr=subprocess.PIPE,
                               cwd=ROOT_DIR).communicate()
-    subprocess.Popen(["docker-compose", "up"] + args,
+    subprocess.Popen(["docker", "compose", "up"] + args,
                      cwd=ROOT_DIR, env=env).communicate()
 
 
