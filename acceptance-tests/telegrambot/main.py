@@ -33,7 +33,7 @@ def main():
 
 def setup_test_environment():
     testing_utils.docker_compose_up()
-    sleep(5)
+    sleep(10)
 
 
 def print_test_environment_docker_compose_log():

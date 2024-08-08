@@ -31,6 +31,7 @@ services:
       - "9090:9090"
     depends_on:
       - database
+      - backend
   database:
     image: postgres:14.6-alpine3.17
     environment:
