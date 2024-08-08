@@ -1,7 +1,7 @@
 version: "3.7"
 services:
   backend:
-    image: ${DOCKER_IMAGES_PREFIX}-backend:${VAYAR_VERSION}
+    image: ${IMAGE_NAME}:${VAYAR_VERSION}
     environment:
       - VAYAR_DB_NAME
       - VAYAR_DB_USER
@@ -16,7 +16,7 @@ services:
     depends_on:
       - database
   telegrambot:
-    image: ${DOCKER_IMAGES_PREFIX}-backend:${VAYAR_VERSION}
+    image: ${IMAGE_NAME}:${VAYAR_VERSION}
     command: bash -c "sleep 2 && ./manage.py telegrambot"
     restart: unless-stopped
     environment:
