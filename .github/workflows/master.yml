@@ -100,7 +100,7 @@ jobs:
         run: >
           VAYAR_VERSION=${GITHUB_SHA:0:7}
           VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
-          python ./main.py -E 'speed == ${{ matrix.test_speed }}'
+          pipenv run python ./main.py -E 'speed == ${{ matrix.test_speed }}'
   deploy:
     runs-on: ubuntu-20.04
     needs:
