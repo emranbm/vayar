@@ -93,6 +93,10 @@ jobs:
           CRUSHBACK_TELEGRAM_CLIENT2_API_HASH=${{ secrets.ACCEPTANCE_TEST_CLIENT2_API_HASH }}
           CRUSHBACK_TELEGRAM_CLIENT2_SESSION_STRING=${{ secrets.ACCEPTANCE_TEST_CLIENT2_SESSION_STRING }}
           " > .env
+      - name: Login to docker registry
+        run: |
+          mkdir ~/.docker/
+          echo ${{secrets.DOCKER_AUTH_CONFIG}} > ~/.docker/config.json
       - name: Pull backend image
         run: >
           VAYAR_VERSION=${GITHUB_SHA:0:7}
