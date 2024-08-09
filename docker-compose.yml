@@ -31,6 +31,10 @@ services:
       - VAYAR_TELEGRAM_BOT_TOKEN
     ports:
       - "9090:9090"
+    build:
+      context: backend/
+      args:
+        - HTTPS_PROXY
     depends_on:
       migrator:
         condition: service_completed_successfully

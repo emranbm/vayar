@@ -39,7 +39,7 @@ jobs:
         working-directory: ./backend/
       - run: pipenv run python ./manage.py makemigrations --dry-run --check
         working-directory: ./backend/
-  build-backend-image:
+  build-image:
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
@@ -48,8 +48,8 @@ jobs:
       - run: echo "VAYAR_VERSION=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
       - name: Docker Login
         run: echo ${{ secrets.DOCKER_REGISTRY_TOKEN }} | docker login -u ${{ vars.DOCKER_REGISTRY_USER }} --password-stdin ${{ vars.DOCKER_REGISTRY_HOST }}
-      - run: docker compose build backend
-      - run: docker compose push backend
+      - run: docker compose build telegrambot
+      - run: docker compose push telegrambot
   acceptance-tests:
     runs-on: ubuntu-20.04
     strategy:
@@ -60,7 +60,7 @@ jobs:
           - 'None'
           # - '"slow"' # Commented to free 1-minute CI placeholder. Uncomment when any slow test existed!
     needs:
-      - build-backend-image
+      - build-image
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -90,11 +90,11 @@ jobs:
           " > .env
       - name: Login to docker registry
         run: echo ${{secrets.DOCKER_AUTH_CONFIG}} > ~/.docker/config.json
-      - name: Pull backend image
+      - name: Pull image
         run: >
           VAYAR_VERSION=${GITHUB_SHA:0:7}
           VAYAR_TELEGRAM_BOT_TOKEN=${{ secrets.ACCEPTANCE_TEST_BOT_TOKEN }}
-          docker compose pull backend
+          docker compose pull telegrambot
       - name: Run acceptance tests
         working-directory: ./acceptance-tests/telegrambot/
         run: >
@@ -104,7 +104,7 @@ jobs:
   deploy:
     runs-on: ubuntu-20.04
     needs:
-      - build-backend-image
+      - build-image
       - unit-tests
       - check-migrations
       - acceptance-tests
