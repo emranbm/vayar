@@ -1,7 +1,8 @@
 version: "3.7"
 services:
-  backend:
+  migrator:
     image: ${IMAGE_NAME}:${VAYAR_VERSION}
+    command: python manage.py migrate
     environment:
       - VAYAR_DB_NAME
       - VAYAR_DB_USER
@@ -14,7 +15,8 @@ services:
       args:
         - HTTPS_PROXY
     depends_on:
-      - database
+      database:
+        condition: service_healthy
   telegrambot:
     image: ${IMAGE_NAME}:${VAYAR_VERSION}
     command: bash -c "sleep 2 && ./manage.py telegrambot"
@@ -30,8 +32,8 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - database
-      - backend
+      migrator:
+        condition: service_completed_successfully
   database:
     image: postgres:14.6-alpine3.17
     environment:
@@ -41,6 +43,12 @@ services:
       - VAYAR_DB_NAME
     ports:
       - $DB_PORT_MAPPING
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U $VAYAR_DB_USER -d $VAYAR_DB_NAME" ]
+      interval: 1s
+      timeout: 2s
+      retries: 7
+      start_period: 1s
     volumes:
       - ./.db-data/:/var/lib/postgresql/data
       - ./init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
